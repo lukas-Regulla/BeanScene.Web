@@ -1,0 +1,46 @@
+﻿@model BeanScene.Web.Models.RestaurantTable
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>RestaurantTable</h4>
+<hr />
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="TableName" class="form-label"></label>
+        <input asp-for="TableName" class="form-control" />
+        <span asp-validation-for="TableName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Seats" class="form-label"></label>
+        <input asp-for="Seats" class="form-control" />
+        <span asp-validation-for="Seats" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="AreaId" class="form-label"></label>
+        <select asp-for="AreaId" class="form-select" asp-items="@(ViewData["AreaId"] as SelectList)"></select>
+        <span asp-validation-for="AreaId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
