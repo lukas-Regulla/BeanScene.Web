@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.VisualBasic;
 
 namespace BeanScene.Web.Models;
 
@@ -15,9 +16,9 @@ public partial class SittingSchedule
 
     public int Scapacity { get; set; }
 
-    public string Status { get; set; } = null!;
+    public string Status { get; set; }
 
-    public bool IsClosed { get; set; }
+    //public bool IsClosed { get; set; }
 
     public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 }

@@ -50,7 +50,7 @@ namespace BeanScene.Web.Controllers
         // GET: RestaurantTables/Create
         public IActionResult Create()
         {
-            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaId");
+            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaName");
             return View();
         }
 
@@ -67,7 +67,7 @@ namespace BeanScene.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaId", restaurantTable.AreaId);
+            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaName", restaurantTable.AreaId);
             return View(restaurantTable);
         }
 
@@ -84,7 +84,7 @@ namespace BeanScene.Web.Controllers
             {
                 return NotFound();
             }
-            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaId", restaurantTable.AreaId);
+            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaName", restaurantTable.AreaId);
             return View(restaurantTable);
         }
 

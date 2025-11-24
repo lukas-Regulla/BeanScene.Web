@@ -46,5 +46,9 @@ public partial class Reservation
 
     // IMPORTANT: navigation properties should not be validated on Create
     [ValidateNever] public virtual SittingSchedule? Sitting { get; set; }  // make nullable
-    [ValidateNever] public virtual ICollection<RestaurantTable> RestaurantTables { get; set; } = new List<RestaurantTable>();
+    [ValidateNever]
+    public virtual ICollection<ReservationTable> ReservationTables { get; set; }
+    = new List<ReservationTable>();
+
+
 }

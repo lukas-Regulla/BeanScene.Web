@@ -88,12 +88,22 @@
                 @Html.DisplayFor(modelItem => item.CreatedAt)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Sitting.SittingScheduleId)
+                @Html.DisplayFor(modelItem => item.Sitting.Stype)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ReservationId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ReservationId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.ReservationId">Delete</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="AssignTables"
+                           asp-route-id="@item.ReservationId"
+                           class="btn btn-warning">
+                            Assign Tables
+                        </a>
+                    }
+
+
             </td>
         </tr>
 }

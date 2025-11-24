@@ -19,7 +19,7 @@ namespace BeanScene.Web.Data
             }
 
             // Admin user
-            const string adminEmail = "";
+            const string adminEmail = "admin@beanscene.com";
             const string adminPass = "Admin!234"; // change after first login
 
             var existing = await userMgr.FindByEmailAsync(adminEmail);

@@ -23,6 +23,8 @@ public partial class BeanSceneContext : DbContext
     public virtual DbSet<RestaurantTable> RestaurantTables { get; set; }
 
     public virtual DbSet<SittingSchedule> SittingSchedules { get; set; }
+    public DbSet<ReservationTable> ReservationTables { get; set; }
+
 
 
 
@@ -85,25 +87,33 @@ public partial class BeanSceneContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reservation_Sitting");
 
-            entity.HasMany(d => d.RestaurantTables).WithMany(p => p.ReservationTables)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ReservationTable",
-                    r => r.HasOne<RestaurantTable>().WithMany()
-                        .HasForeignKey("RestaurantTableId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_ReservationTable_Table"),
-                    l => l.HasOne<Reservation>().WithMany()
-                        .HasForeignKey("ReservationTableId")
-                        .HasConstraintName("FK_ReservationTable_Reservation"),
-                    j =>
-                    {
-                        j.HasKey("ReservationTableId", "RestaurantTableId");
-                        j.ToTable("ReservationTable");
-                        j.HasIndex(new[] { "RestaurantTableId" }, "IX_ReservationTable_Table");
-                        j.IndexerProperty<int>("ReservationTableId").HasColumnName("ReservationTableID");
-                        j.IndexerProperty<int>("RestaurantTableId").HasColumnName("RestaurantTableID");
-                    });
+
         });
+        modelBuilder.Entity<ReservationTable>(entity =>
+        {
+            entity.ToTable("ReservationTable");
+
+            // Composite primary key
+            entity.HasKey(rt => new { rt.ReservationId, rt.RestaurantTableID });
+
+            entity.Property(rt => rt.ReservationId).HasColumnName("ReservationID");
+            entity.Property(rt => rt.RestaurantTableID).HasColumnName("RestaurantTableID");
+
+            // Relationship: ReservationTable → Reservation
+            entity.HasOne(rt => rt.Reservation)
+                  .WithMany(r => r.ReservationTables)
+                  .HasForeignKey(rt => rt.ReservationId)
+                  .OnDelete(DeleteBehavior.Cascade)
+                  .HasConstraintName("FK_ReservationTable_Reservation");
+
+            // Relationship: ReservationTable → RestaurantTable
+            entity.HasOne(rt => rt.RestaurantTable)
+                  .WithMany(t => t.ReservationTables)
+                  .HasForeignKey(rt => rt.RestaurantTableID)
+                  .OnDelete(DeleteBehavior.Cascade)
+                  .HasConstraintName("FK_ReservationTable_Table");
+        });
+
 
         modelBuilder.Entity<RestaurantTable>(entity =>
         {

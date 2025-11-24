@@ -22,6 +22,20 @@ public partial class RestaurantTable
     public virtual Area? Area { get; set; }  // <-- make nullable for NRT
 
     [ValidateNever]
-    public virtual ICollection<Reservation> ReservationTables { get; set; } = new List<Reservation>();
+    public virtual ICollection<ReservationTable> ReservationTables { get; set; }
+    = new List<ReservationTable>();
+
 }
+
+
+public class ReservationTable
+{
+    public int ReservationId { get; set; }
+    public Reservation Reservation { get; set; }
+
+    public int RestaurantTableID { get; set; }
+    public RestaurantTable RestaurantTable { get; set; }
+}
+
+
 
