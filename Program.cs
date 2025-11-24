@@ -1,7 +1,10 @@
+using System.Drawing;
 using BeanScene.Web.Data;
+using BeanScene.Web.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
+using BeanScene.Web.Hubs;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +33,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddSignalR();
+
 
 
 var app = builder.Build();
@@ -63,5 +68,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     await SeedIdentity.EnsureSeededAsync(services);
 }
+
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();
