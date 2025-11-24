@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeanScene.Web.Controllers
 {
-    [Authorize(Roles = "Admin,Staff")]
+    [Authorize(Roles = "Admin")]
     public class RestaurantTablesController : Controller
     {
         private readonly BeanSceneContext _context;

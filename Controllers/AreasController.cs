@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BeanScene.Web.Data;
+using BeanScene.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BeanScene.Web.Data;
-using BeanScene.Web.Models;
 
 namespace BeanScene.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AreasController : Controller
     {
         private readonly BeanSceneContext _context;

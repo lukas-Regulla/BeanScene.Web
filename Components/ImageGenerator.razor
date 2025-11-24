@@ -1,0 +1,77 @@
+﻿Components/ImageGenerator.razor
+<h3>Dynamic Image Generator</h3>
+
+<div class="p-3 border rounded bg-light">
+    <div class="row g-3 align-items-start">
+        <div class="col-md-4">
+            <input @bind="text1" class="form-control mb-2" placeholder="Enter first text..." />
+            <button class="btn btn-primary" @onclick="() => Generate()">Rectangle</button>
+
+            @if (!string.IsNullOrEmpty(imageUrl1))
+            {
+                <div class="mt-3">
+                    <img src="@imageUrl1" class="border shadow-sm img-fluid" />
+                </div>
+            }
+        </div>
+
+        <div class="col-md-4">
+            <input type="number" min="50" max="350" @bind="diameter1" class="form-control mb-2" placeholder="Enter diameter" />
+            <button class="btn btn-success" @onclick="() => DrawMeACircle()">Generate Circle</button>
+
+            @if (!string.IsNullOrEmpty(imageUrl2))
+            {
+                <div class="mt-3">
+                    <img src="@imageUrl2" class="border shadow-sm img-fluid" />
+                </div>
+            }
+        </div>
+
+        <div class="col-md-4">
+            <select @bind="selectedColor" class="form-select mb-2">
+                <option value="Red">Red</option>
+                <option value="Blue">Blue</option>
+                <option value="Green">Green</option>
+                <option value="Yellow">Yellow</option>
+                <option value="Black">Black</option>
+            </select>
+            <input type="number" min="50" max="350" @bind="diameter2" class="form-control mb-2" placeholder="Enter diameter" />
+            <button class="btn btn-success" @onclick="() => DrawFilledCircle()">Draw filled circle</button>
+
+            @if (!string.IsNullOrEmpty(imageUrl3))
+            {
+                <div class="mt-3">
+                    <img src="@imageUrl3" class="border shadow-sm img-fluid" />
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string text1 = "Greetings :)";
+    private int diameter1 = 0;
+    private int diameter2 = 0;
+    private string? imageUrl1;
+    private string? imageUrl2;
+    private string? imageUrl3;
+    private string selectedColor = "Red";
+
+    private void Generate()
+    {
+        var t = DateTime.Now.Ticks;
+        imageUrl1 = $"api/image/generate?text={Uri.EscapeDataString(text1)}&t={t}";
+    }
+    private void DrawMeACircle()
+    {
+        var t = DateTime.Now.Ticks;
+        imageUrl2 = $"api/image/drawmeacircle?diameter={diameter1}&t={t}";
+    }
+
+    private void DrawFilledCircle()
+    {
+        var t = DateTime.Now.Ticks;
+        imageUrl3 = $"api/image/drawfilledcircle?diameter={diameter2}&colour={selectedColor}&t={t}";
+    }
+}
+

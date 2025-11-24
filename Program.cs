@@ -1,6 +1,8 @@
 using BeanScene.Web.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +28,15 @@ builder.Services
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
 
 var app = builder.Build();
+
+app.MapRazorComponents<BeanScene.Web.Components.ImageGenerator>()
+    .AddInteractiveServerRenderMode();
+
 
 if (!app.Environment.IsDevelopment())
 {
