@@ -3,28 +3,42 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-
 @{
     ViewData["Title"] = "Home Page";
 }
 
+<div class="text-center mt-5">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
-<div class="text-center mt-4">
-    <a class="btn btn-lg btn-primary" asp-controller="Reservations" asp-action="Create">
-        Make a Reservation
-    </a>
-</div>
-@if (SignInManager.IsSignedIn(User) && User.IsInRole("Member"))
-{
-    <div class="mt-4 text-center">
-        <a asp-controller="Reservations"
-           asp-action="MyReservations"
-           class="btn btn-outline-primary btn-lg">
-            View My Reservations
+    <h1 class="display-3 fw-bold">Welcome to BeanScene</h1>
+
+    <p class="lead mt-3" style="max-width: 700px; margin: 0 auto;">
+        Enjoy a warm and inviting dining experience at BeanScene Café.
+        Book your next visit with ease, check your upcoming reservations,
+        and let us take care of the rest. Whether you’re joining us for a
+        quiet morning coffee or a lively evening meal — we’re here to make it memorable.
+    </p>
+
+    <hr class="mt-4 mb-4" style="width: 50%; margin-left: auto; margin-right: auto;" />
+
+    <!-- Make Reservation Button -->
+    <div class="mt-3">
+        <a class="btn btn-lg btn-primary px-4 py-2"
+           asp-controller="Reservations"
+           asp-action="Create">
+            Make a Reservation
         </a>
     </div>
-}
+
+    <!-- Member-only "My Reservations" -->
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Member"))
+    {
+        <div class="mt-4">
+            <a asp-controller="Reservations"
+               asp-action="MyReservations"
+               class="btn btn-outline-primary btn-lg px-4 py-2">
+                View My Reservations
+            </a>
+        </div>
+    }
+
+</div>
