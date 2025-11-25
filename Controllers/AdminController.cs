@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using BeanScene.Web.Data;
+using AspNetCoreGeneratedDocument;
 
 namespace BeanScene.Web.Controllers
 {
@@ -62,7 +63,48 @@ namespace BeanScene.Web.Controllers
 
             return RedirectToAction(nameof(Users));
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return BadRequest();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            // Prevent deleting yourself
+            var currentUserId = _userManager.GetUserId(User);
+            if (user.Id == currentUserId)
+            {
+                TempData["ErrorMessage"] = "You cannot delete your own account.";
+                return RedirectToAction(nameof(Users));
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+            {
+                TempData["ErrorMessage"] =
+                    "Failed to delete user: " + string.Join(", ", result.Errors.Select(e => e.Description));
+            }
+            else
+            {
+                TempData["SuccessMessage"] = $"User {user.Email} deleted.";
+            }
+
+            return RedirectToAction(nameof(Users));
+        }
     }
+
 
     // ✅ Simple view model for user listing
     public class UserRoleViewModel

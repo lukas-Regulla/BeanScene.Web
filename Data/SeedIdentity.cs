@@ -19,24 +19,24 @@ namespace BeanScene.Web.Data
             }
 
             // Admin user
-            const string adminEmail = "admin@beanscene.com";
-            const string adminPass = "Admin!234"; // change after first login
+            //const string adminEmail = "admin@beanscene.com";
+            //const string adminPass = "Admin!234"; // change after first login
 
-            var existing = await userMgr.FindByEmailAsync(adminEmail);
-            if (existing == null)
-            {
-                var admin = new ApplicationUser
-                {
-                    UserName = adminEmail,
-                    Email = adminEmail,
-                    EmailConfirmed = true
-                };
-                var create = await userMgr.CreateAsync(admin, adminPass);
-                if (create.Succeeded)
-                {
-                    await userMgr.AddToRoleAsync(admin, "Admin");
-                }
-            }
+            //var existing = await userMgr.FindByEmailAsync(adminEmail);
+            //if (existing == null)
+            //{
+            //    var admin = new ApplicationUser
+            //    {
+            //        UserName = adminEmail,
+            //        Email = adminEmail,
+            //        EmailConfirmed = true
+            //    };
+            //    var create = await userMgr.CreateAsync(admin, adminPass);
+            //    if (create.Succeeded)
+            //    {
+            //        await userMgr.AddToRoleAsync(admin, "Admin");
+            //    }
+            //}
         }
     }
 }
