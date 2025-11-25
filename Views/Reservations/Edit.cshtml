@@ -95,7 +95,16 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @if (User.IsInRole("Member"))
+    {
+        <a asp-action="MyReservations" class="btn btn-secondary">Back</a>
+    }
+    else
+    {
+        <a asp-action="Index">Back to List</a>
+    }
+
+    
 </div>
 
 @section Scripts {
