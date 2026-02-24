@@ -47,7 +47,8 @@
                                 <input type="checkbox"
                                        name="SelectedTableIds"
                                        value="@t.RestaurantTableId"
-                                       @(isAssigned ? "checked" : "") />
+                                       @(Model.SelectedTableIds.Contains(t.RestaurantTableId) ? "checked" : "") />
+
                             </td>
 
                             <td>@t.TableName</td>

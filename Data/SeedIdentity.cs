@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BeanScene.Web.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BeanScene.Web.Data
@@ -18,25 +21,6 @@ namespace BeanScene.Web.Data
                     await roleMgr.CreateAsync(new IdentityRole(r));
             }
 
-            // Admin user
-            //const string adminEmail = "admin@beanscene.com";
-            //const string adminPass = "Admin!234"; // change after first login
-
-            //var existing = await userMgr.FindByEmailAsync(adminEmail);
-            //if (existing == null)
-            //{
-            //    var admin = new ApplicationUser
-            //    {
-            //        UserName = adminEmail,
-            //        Email = adminEmail,
-            //        EmailConfirmed = true
-            //    };
-            //    var create = await userMgr.CreateAsync(admin, adminPass);
-            //    if (create.Succeeded)
-            //    {
-            //        await userMgr.AddToRoleAsync(admin, "Admin");
-            //    }
-            //}
         }
     }
 }
