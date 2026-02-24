@@ -56,7 +56,7 @@ It includes separate experiences for members and admins, with validation rules t
 - Improve booking conflict detection & edge cases
 
 ## Screenshots
-*(Add screenshots or a short GIF here once UI is polished.)*
+
 
 ## Author
 Lukas Regulla
