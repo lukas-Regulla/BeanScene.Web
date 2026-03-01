@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BeanScene.Web.Data;
 using BeanScene.Web.Models;
+using BeanScene.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
@@ -13,11 +14,13 @@ namespace BeanScene.Web.Controllers
     {
         private readonly BeanSceneContext _context;
         private readonly IEmailSender _emailSender;
+        private readonly IReservationValidator _validator;
 
-        public ReservationsController(BeanSceneContext context, IEmailSender emailSender)
+        public ReservationsController(BeanSceneContext context, IEmailSender emailSender, IReservationValidator validator)
         {
             _context = context;
             _emailSender = emailSender;
+            _validator = validator;
         }
 
         // ── Actions ──────────────────────────────────────────────────────────────
@@ -88,16 +91,13 @@ namespace BeanScene.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ReservationId,SittingId,FirstName,LastName,Email,Phone,StartTime,Duration,NumOfGuests,ReservationSource,Notes,Status,CreatedAt")] Reservation reservation)
         {
-            var sitting = await GetSittingOrAddModelErrorAsync(reservation.SittingId);  
-            if (sitting != null)
-            {
-                ValidateSittingIsOpen(sitting);                            
-                await ValidateSittingCapacityAsync(sitting, reservation.NumOfGuests);   
-            }
+            var (sitting, validation) = await _validator.ValidateCreateAsync(reservation.SittingId, reservation.NumOfGuests);
+            foreach (var (key, msg) in validation.Errors)
+                ModelState.AddModelError(key, msg);
 
             if (!ModelState.IsValid)
             {
-                ViewData["SittingId"] = BuildSittingSelectList(reservation.SittingId); 
+                ViewData["SittingId"] = BuildSittingSelectList(reservation.SittingId);
                 return View(reservation);
             }
 
@@ -105,12 +105,10 @@ namespace BeanScene.Web.Controllers
             reservation.CreatedAt = DateTime.Now;
 
             _context.Add(reservation);
-            await _context.SaveChangesAsync();     
-            
-            if (sitting !=null)
-            {
-                await SendCreatedEmailAsync(reservation, sitting!);
-            }
+            await _context.SaveChangesAsync();
+
+            if (sitting != null)
+                await SendCreatedEmailAsync(reservation, sitting);
 
             if (IsMember())                                                
                 return RedirectToAction("Index", "Home");
@@ -160,17 +158,13 @@ namespace BeanScene.Web.Controllers
             if (id != reservation.ReservationId)
                 return NotFound();
 
-            var sitting = await GetSittingOrAddModelErrorAsync(reservation.SittingId);  // step 4
-            if (sitting != null)
-            {
-                ValidateSittingIsOpen(sitting);                            // step 4
-                // Exclude the current reservation so it doesn't count against its own sitting capacity.
-                await ValidateSittingCapacityAsync(sitting, reservation.NumOfGuests, id); // step 4
-            }
+            var (_, validation) = await _validator.ValidateEditAsync(reservation.SittingId, reservation.NumOfGuests, id);
+            foreach (var (key, msg) in validation.Errors)
+                ModelState.AddModelError(key, msg);
 
             if (!ModelState.IsValid)
             {
-                ViewData["SittingId"] = BuildSittingSelectList(reservation.SittingId); // step 2
+                ViewData["SittingId"] = BuildSittingSelectList(reservation.SittingId);
                 return View(reservation);
             }
 
@@ -360,36 +354,6 @@ namespace BeanScene.Web.Controllers
 
         private string? GetCurrentUserEmail() => User.Identity?.Name;
         private bool IsMember() => User.IsInRole("Member");
-
-        // ── Sitting validation helpers ────────────────────────────────────────────
-
-        /// <summary>Loads the sitting by ID; adds a model error and returns null if not found.</summary>
-        private async Task<SittingSchedule?> GetSittingOrAddModelErrorAsync(int sittingId)
-        {
-            var sitting = await _context.SittingSchedules.FindAsync(sittingId);
-            if (sitting == null)
-                ModelState.AddModelError("SittingId", "Invalid sitting selected.");
-            return sitting;
-        }
-
-        private void ValidateSittingIsOpen(SittingSchedule sitting)
-        {
-            if (sitting.Status == "Closed")
-                ModelState.AddModelError("SittingId", "This sitting is CLOSED. No reservations allowed.");
-        }
-
-        /// <param name="excludeReservationId">Exclude this reservation from the booked-guest count (used on edits).</param>
-        private async Task ValidateSittingCapacityAsync(
-            SittingSchedule sitting, int guests, int? excludeReservationId = null)
-        {
-            var alreadyBooked = await _context.Reservations
-                .Where(r => r.SittingId == sitting.SittingScheduleId &&
-                            (excludeReservationId == null || r.ReservationId != excludeReservationId))
-                .SumAsync(r => (int?)r.NumOfGuests) ?? 0;
-
-            if (alreadyBooked + guests > sitting.Scapacity)
-                ModelState.AddModelError("NumOfGuests", "Sitting capacity exceeded.");
-        }
 
         // ── Email helpers ─────────────────────────────────────────────────────────
 
