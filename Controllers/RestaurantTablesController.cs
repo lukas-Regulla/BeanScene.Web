@@ -72,8 +72,7 @@ namespace BeanScene.Web.Controllers
         /// <returns>View with table creation form and area options</returns>
         public IActionResult Create()
         {
-            // Create a dropdown list of all areas for table assignment
-            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaName");
+            ViewData["AreaId"] = BuildAreaSelectList();
             return View();
         }
 
@@ -98,8 +97,7 @@ namespace BeanScene.Web.Controllers
                 // Redirect to the tables list
                 return RedirectToAction(nameof(Index));
             }
-            // Repopulate area dropdown and return to form if validation failed
-            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaName", restaurantTable.AreaId);
+            ViewData["AreaId"] = BuildAreaSelectList(restaurantTable.AreaId);
             return View(restaurantTable);
         }
 
@@ -128,8 +126,7 @@ namespace BeanScene.Web.Controllers
                 return NotFound();
             }
             
-            // Create area dropdown with the table's current area selected
-            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaName", restaurantTable.AreaId);
+            ViewData["AreaId"] = BuildAreaSelectList(restaurantTable.AreaId);
             return View(restaurantTable);
         }
 
@@ -177,8 +174,7 @@ namespace BeanScene.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
             
-            // Repopulate area dropdown and return to form if validation failed
-            ViewData["AreaId"] = new SelectList(_context.Areas, "AreaId", "AreaId", restaurantTable.AreaId);
+            ViewData["AreaId"] = BuildAreaSelectList(restaurantTable.AreaId);
             return View(restaurantTable);
         }
 
@@ -236,6 +232,10 @@ namespace BeanScene.Web.Controllers
             // Redirect to the tables list
             return RedirectToAction(nameof(Index));
         }
+
+        /// <summary>Builds the area <see cref="SelectList"/> used in Create and Edit forms.</summary>
+        private SelectList BuildAreaSelectList(int? selectedId = null)
+            => new SelectList(_context.Areas, "AreaId", "AreaName", selectedId);
 
         /// <summary>
         /// Helper method to check if a restaurant table exists in the database.

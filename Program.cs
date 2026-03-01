@@ -33,6 +33,8 @@ builder.Services
 
 builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IReservationValidator, ReservationValidator>();
+builder.Services.AddScoped<IReservationEmailService, ReservationEmailService>();
+builder.Services.AddScoped<IReservationStatisticsService, ReservationStatisticsService>();
 
 
 builder.Services.AddControllersWithViews();

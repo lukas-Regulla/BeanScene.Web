@@ -5,7 +5,6 @@ using BeanScene.Web.Data;
 using BeanScene.Web.Models;
 using BeanScene.Web.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace BeanScene.Web.Controllers
 {
@@ -13,14 +12,14 @@ namespace BeanScene.Web.Controllers
     public class ReservationsController : Controller
     {
         private readonly BeanSceneContext _context;
-        private readonly IEmailSender _emailSender;
         private readonly IReservationValidator _validator;
+        private readonly IReservationEmailService _emailService;
 
-        public ReservationsController(BeanSceneContext context, IEmailSender emailSender, IReservationValidator validator)
+        public ReservationsController(BeanSceneContext context, IReservationValidator validator, IReservationEmailService emailService)
         {
             _context = context;
-            _emailSender = emailSender;
             _validator = validator;
+            _emailService = emailService;
         }
 
         // ── Actions ──────────────────────────────────────────────────────────────
@@ -108,7 +107,7 @@ namespace BeanScene.Web.Controllers
             await _context.SaveChangesAsync();
 
             if (sitting != null)
-                await SendCreatedEmailAsync(reservation, sitting);
+                await _emailService.SendCreatedAsync(reservation, sitting);
 
             if (IsMember())                                                
                 return RedirectToAction("Index", "Home");
@@ -281,7 +280,7 @@ namespace BeanScene.Web.Controllers
             reservation.Status = "Confirmed";
             await _context.SaveChangesAsync();
 
-            await SendConfirmedEmailAsync(reservation);                    // step 5
+            await _emailService.SendConfirmedAsync(reservation);
 
             return RedirectToAction(nameof(Index));
         }
@@ -354,41 +353,6 @@ namespace BeanScene.Web.Controllers
 
         private string? GetCurrentUserEmail() => User.Identity?.Name;
         private bool IsMember() => User.IsInRole("Member");
-
-        // ── Email helpers ─────────────────────────────────────────────────────────
-
-        private async Task SendCreatedEmailAsync(Reservation reservation, SittingSchedule sitting)
-        {
-            if (string.IsNullOrEmpty(reservation.Email)) return;
-            var subject = "Reservation Created";
-            var message = $"Dear {reservation.FirstName} {reservation.LastName},<br/><br/>" +
-                          $"Your reservation for {reservation.NumOfGuests} guests on {sitting.Stype} sitting " +
-                          $"at {reservation.StartTime:h:mm tt} has been created successfully.<br/><br/>" +
-                          "Thank you for choosing our restaurant!<br/><br/>" +
-                          "Best regards,<br/>BeanScene Team";
-            await _emailSender.SendEmailAsync(reservation.Email, subject, message);
-        }
-
-        private async Task SendConfirmedEmailAsync(Reservation reservation)
-        {
-            if (string.IsNullOrEmpty(reservation.Email)) return;
-            var subject = "Your Reservation is Confirmed";
-            var confirmMessage = $@"
-                    <h2>Your Reservation is Confirmed!</h2>
-                    <p>Hi {reservation.FirstName},</p>
-                    <p>Your reservation at BeanScene Café has been confirmed.</p>
-
-                    <h3>Reservation Details</h3>
-                    <p><strong>Date:</strong> {reservation.StartTime:dddd, dd MMM yyyy}</p>
-                    <p><strong>Start Time:</strong> {reservation.StartTime:hh:mm tt}</p>
-                    <p><strong>Guests:</strong> {reservation.NumOfGuests}</p>
-                    <p><strong>Duration:</strong> {reservation.Duration} minutes</p>
-                    <p><strong>Status:</strong> Confirmed</p>
-
-                    <p>We look forward to seeing you!</p>
-                ";
-            await _emailSender.SendEmailAsync(reservation.Email, subject, confirmMessage);
-        }
 
         // ── AssignTables helpers ──────────────────────────────────────────────────
 
