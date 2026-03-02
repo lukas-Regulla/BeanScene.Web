@@ -37,6 +37,7 @@ namespace BeanScene.Web.Controllers
         }
 
         /// <summary>
+        /// <summary>
         /// Lists reservations for the currently logged-in member, matched by email address.
         /// </summary>
         [Authorize(Roles = "Member")]

@@ -54,7 +54,6 @@ namespace BeanScene.Web.Controllers
                 .Include(r => r.Area)
                 .FirstOrDefaultAsync(m => m.RestaurantTableId == id);
             
-            // Return NotFound if table doesn't exist
             if (restaurantTable == null)
             {
                 return NotFound();
