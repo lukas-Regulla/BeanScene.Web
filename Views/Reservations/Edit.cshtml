@@ -1,17 +1,15 @@
-﻿@model BeanScene.Web.Models.Reservation
+@model BeanScene.Web.Models.Reservation
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Reservation";
 }
 
-<h1>Edit</h1>
+<h1 class="page-title">Edit Reservation</h1>
 
-<h4>Reservation</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="container-narrow">
+    <div class="card">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="ReservationId" />
             <div class="form-group">
                 <label asp-for="SittingId" class="control-label"></label>
@@ -62,7 +60,6 @@
                     <option>Email</option>
                     <option>InPerson</option>
                 </select>
-
                 <span asp-validation-for="ReservationSource" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -71,15 +68,14 @@
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
             <div class="form-group">
-				<label asp-for="Status" class="control-label"></label>
-				<select asp-for="Status" class="form-control">
-					<option>Pending</option>
-					<option>Confirmed</option>
-					<option>Seated</option>
-					<option>Completed</option>
-					<option>Cancelled</option>
-				</select>
-
+                <label asp-for="Status" class="control-label"></label>
+                <select asp-for="Status" class="form-control">
+                    <option>Pending</option>
+                    <option>Confirmed</option>
+                    <option>Seated</option>
+                    <option>Completed</option>
+                    <option>Cancelled</option>
+                </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -87,24 +83,20 @@
                 <input asp-for="CreatedAt" class="form-control" />
                 <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group mt-3">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
 
-<div>
     @if (User.IsInRole("Member"))
     {
-        <a asp-action="MyReservations" class="btn btn-secondary">Back</a>
+        <a asp-action="MyReservations" class="btn btn-secondary btn-sm">Back</a>
     }
     else
     {
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">Back to List</a>
     }
-
-    
 </div>
 
 @section Scripts {

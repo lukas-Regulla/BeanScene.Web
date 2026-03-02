@@ -1,18 +1,17 @@
-﻿@model IEnumerable<BeanScene.Web.Models.Reservation>
+@model IEnumerable<BeanScene.Web.Models.Reservation>
 
-<h2 class="mt-3">My Reservations</h2>
+<h2 class="page-title mt-3">My Reservations</h2>
 
-<table class="table table-striped mt-4">
+<table class="table mt-4">
     <thead>
         <tr>
             <th>Date</th>
             <th>Guests</th>
-            <th>Duration(Minutes)</th>
+            <th>Duration (mins)</th>
             <th>Status</th>
             <th></th>
         </tr>
     </thead>
-
     <tbody>
         @foreach (var r in Model)
         {
@@ -20,8 +19,11 @@
                 <td>@r.StartTime.ToString("dddd, dd MMM yyyy hh:mm tt")</td>
                 <td>@r.NumOfGuests</td>
                 <td>@r.Duration</td>
-                <td>@r.Status</td>
-
+                <td>
+                    <span class="status-badge status-@(r.Status?.ToLower() ?? "")">
+                        @r.Status
+                    </span>
+                </td>
                 <td>
                     @if (r.Status == "Pending")
                     {
@@ -33,7 +35,7 @@
                     }
                     else
                     {
-                        <span class="text-muted">Confirmed</span>
+                        <span class="muted">Confirmed</span>
                     }
                     <form asp-action="Delete" asp-route-id="@r.ReservationId" method="post" style="display:inline;">
                         <button type="submit"
@@ -43,16 +45,13 @@
                         </button>
                     </form>
                 </td>
-                
-
             </tr>
         }
     </tbody>
 </table>
 
 <div class="mt-4">
-    <a asp-controller="Home" asp-action="Index"
-       class="btn btn-secondary">
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
         ← Back to Home
     </a>
 </div>

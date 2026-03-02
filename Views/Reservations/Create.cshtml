@@ -1,20 +1,18 @@
-﻿@model BeanScene.Web.Models.Reservation
+@model BeanScene.Web.Models.Reservation
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "New Reservation";
 }
 
-<h1>Create</h1>
+<h1 class="page-title">New Reservation</h1>
 
-<h4>Reservation</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="container-narrow">
+    <div class="card">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <div class="form-group">
                 <label asp-for="SittingId" class="control-label"></label>
-                <select asp-for="SittingId" class ="form-control" asp-items="ViewBag.SittingId"></select>
+                <select asp-for="SittingId" class="form-control" asp-items="ViewBag.SittingId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
@@ -60,7 +58,6 @@
                     <option>Email</option>
                     <option>InPerson</option>
                 </select>
-
                 <span asp-validation-for="ReservationSource" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -68,20 +65,14 @@
                 <input asp-for="Notes" class="form-control" />
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
-            @* <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div> *@
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            @* Status is set to Pending automatically by the controller *@
+            <div class="form-group mt-3">
+                <input type="submit" value="Create Reservation" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
 
-<div>
-    <a asp-controller="Home" asp-action="Index">Back to Home</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-sm">Back to Home</a>
 </div>
 
 @section Scripts {
