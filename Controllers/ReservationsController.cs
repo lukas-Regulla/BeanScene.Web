@@ -14,12 +14,14 @@ namespace BeanScene.Web.Controllers
         private readonly BeanSceneContext _context;
         private readonly IReservationValidator _validator;
         private readonly IReservationEmailService _emailService;
+        private readonly ITableAssignmentService _tableAssignment;
 
-        public ReservationsController(BeanSceneContext context, IReservationValidator validator, IReservationEmailService emailService)
+        public ReservationsController(BeanSceneContext context, IReservationValidator validator, IReservationEmailService emailService, ITableAssignmentService tableAssignment)
         {
             _context = context;
             _validator = validator;
             _emailService = emailService;
+            _tableAssignment = tableAssignment;
         }
 
         // ── Actions ──────────────────────────────────────────────────────────────
@@ -245,43 +247,17 @@ namespace BeanScene.Web.Controllers
                 .Include(r => r.Sitting)
                 .FirstOrDefaultAsync(r => r.ReservationId == id);
 
-            if (reservation == null)
-                return NotFound();
+            if (reservation == null) return NotFound();
 
-            // Double-booking check: reject any table already assigned to another reservation in this sitting.
-            if (await HasTableConflictsAsync(reservation, model.SelectedTableIds))  // step 6
+            var result = await _tableAssignment.AssignAsync(reservation, model.SelectedTableIds);
+
+            if (!result.Succeeded)
             {
-                TempData["SeatError"] = "One or more of these selected tables are already booked for this sitting.";
-                return RedirectToAction("AssignTables", new { id = id });
+                TempData["SeatError"] = result.ErrorMessage;
+                return RedirectToAction("AssignTables", new { id });
             }
-
-            int totalSeats = await GetTotalSeatsAsync(model.SelectedTableIds);      // step 6
-            if (totalSeats < reservation.NumOfGuests)
-            {
-                TempData["SeatError"] =
-                    $"Selected tables only seat {totalSeats}, but reservation requires {reservation.NumOfGuests}.";
-                return RedirectToAction("AssignTables", new { id = id });
-            }
-
-            // Replace all existing table assignments for this reservation.
-            var oldAssignments = _context.ReservationTables.Where(rt => rt.ReservationId == id);
-            _context.ReservationTables.RemoveRange(oldAssignments);
-
-            foreach (var tableId in model.SelectedTableIds)
-            {
-                _context.ReservationTables.Add(new ReservationTable
-                {
-                    ReservationId = id,
-                    RestaurantTableID = tableId
-                });
-            }
-
-            // Assigning tables moves the reservation to Confirmed status.
-            reservation.Status = "Confirmed";
-            await _context.SaveChangesAsync();
 
             await _emailService.SendConfirmedAsync(reservation);
-
             return RedirectToAction(nameof(Index));
         }
 
@@ -353,30 +329,6 @@ namespace BeanScene.Web.Controllers
 
         private string? GetCurrentUserEmail() => User.Identity?.Name;
         private bool IsMember() => User.IsInRole("Member");
-
-        // ── AssignTables helpers ──────────────────────────────────────────────────
-
-        /// <summary>
-        /// Returns true if any selected table is already booked for this sitting under a different reservation.
-        /// </summary>
-        private async Task<bool> HasTableConflictsAsync(Reservation reservation, List<int> selectedTableIds)
-        {
-            return await _context.ReservationTables
-                .Include(rt => rt.Reservation)
-                .Where(rt => selectedTableIds.Contains(rt.RestaurantTableID)
-                    && rt.Reservation.SittingId == reservation.SittingId
-                    && rt.ReservationId != reservation.ReservationId)
-                .AnyAsync();
-        }
-
-        /// <summary>Returns the total seat count across the given table IDs.</summary>
-        private async Task<int> GetTotalSeatsAsync(List<int> selectedTableIds)
-        {
-            var tables = await _context.RestaurantTables
-                .Where(t => selectedTableIds.Contains(t.RestaurantTableId))
-                .ToListAsync();
-            return tables.Sum(t => t.Seats ?? 0);
-        }
 
         // ── Misc ──────────────────────────────────────────────────────────────────
 
