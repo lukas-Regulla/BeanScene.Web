@@ -26,6 +26,7 @@
             <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
             <th>@Html.DisplayNameFor(model => model.Sitting)</th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -49,13 +50,50 @@
                 <td>@Html.DisplayFor(modelItem => item.CreatedAt)</td>
                 <td>@Html.DisplayFor(modelItem => item.Sitting.Stype)</td>
                 <td>
-                    <a asp-action="Edit"    asp-route-id="@item.ReservationId" class="action-link">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.ReservationId" class="action-link">Details</a>
-                    <a asp-action="Delete"  asp-route-id="@item.ReservationId" class="action-link action-link-danger">Delete</a>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a asp-action="AssignTables" asp-route-id="@item.ReservationId" class="btn btn-warning btn-sm">Assign Tables</a>
-                    }
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-sm dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            Actions
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-action="Edit"
+                                   asp-route-id="@item.ReservationId">
+                                    Edit
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-action="Details"
+                                   asp-route-id="@item.ReservationId">
+                                    Details
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger"
+                                   asp-action="Delete"
+                                   asp-route-id="@item.ReservationId">
+                                    Delete
+                                </a>
+                            </li>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-action="AssignTables"
+                                       asp-route-id="@item.ReservationId">
+                                        Assign Tables
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </td>
             </tr>
         }

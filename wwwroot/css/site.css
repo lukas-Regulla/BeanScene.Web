@@ -55,12 +55,12 @@ body {
   margin-bottom: 60px;
 }
 
-a {
+/*a {
   color: var(--color-primary-light);
 }
 a:hover {
-  color: var(--color-primary-dark);
-}
+  color: var(--color-primary-light);
+}*/
 
 /* ── Navbar ────────────────────────────────────────────────────────── */
 .navbar {
@@ -183,24 +183,41 @@ footer a:hover {
 /* ── Buttons ───────────────────────────────────────────────────────── */
 .btn-primary,
 input[type="submit"].btn-primary {
+  margin: 4px;
   background-color: var(--color-primary) !important;
   border-color: var(--color-primary) !important;
   color: #fff !important;
   font-weight: 600;
+  padding: 8px 18px;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 .btn-primary:hover,
-input[type="submit"].btn-primary:hover {
-  background-color: var(--color-primary-dark) !important;
-  border-color: var(--color-primary-dark) !important;
+.btn-primary:active,
+.btn-primary:focus-visible,
+input[type="submit"].btn-primary:hover,
+input[type="submit"].btn-primary:active {
+  background-color: var(--color-accent) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary-dark) !important;
 }
-.btn-secondary {
-  background-color: var(--color-accent-dark) !important;
-  border-color: var(--color-accent-dark) !important;
+.btn-secondary,
+input[type="submit"].btn-secondary {
+  margin: 4px;
+  background-color: var(--color-accent-light) !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  font-weight: 600;
+  padding: 8px 18px;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.btn-secondary:hover,
+.btn-secondary:active,
+.btn-secondary:focus-visible,
+input[type="submit"].btn-secondary:hover,
+input[type="submit"].btn-secondary:active {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
   color: #fff !important;
-}
-.btn-secondary:hover {
-  background-color: var(--color-primary-light) !important;
-  border-color: var(--color-primary-light) !important;
 }
 .btn-warning {
   background-color: #e65100 !important;
