@@ -1,13 +1,8 @@
-using System.Drawing;
 using BeanScene.Web.Data;
-using BeanScene.Web.Hubs;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using BeanScene.Web.Hubs;
 using BeanScene.Web.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-
-
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,9 +16,10 @@ builder.Services.AddDbContext<BeanSceneContext>(opts => opts.UseSqlServer(cs));
 // Identity context (AspNet* tables)
 builder.Services.AddDbContext<ApplicationDbContext>(opts => opts.UseSqlServer(cs));
 
-// *** Identity with Roles (guarantees RoleManager & stores) ***
+// Identity with Roles
 builder.Services
-    .AddIdentity<ApplicationUser, IdentityRole>(o => {
+    .AddIdentity<ApplicationUser, IdentityRole>(o =>
+    {
         o.SignIn.RequireConfirmedAccount = true;
         o.User.RequireUniqueEmail = true;
     })
@@ -31,26 +27,17 @@ builder.Services
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
+// App services
 builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IReservationValidator, ReservationValidator>();
 builder.Services.AddScoped<IReservationEmailService, ReservationEmailService>();
 builder.Services.AddScoped<IReservationStatisticsService, ReservationStatisticsService>();
 builder.Services.AddScoped<ITableAssignmentService, TableAssignmentService>();
 
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
-builder.Services.AddSignalR();
-
-
 
 var app = builder.Build();
-
-app.MapRazorComponents<BeanScene.Web.Components.ImageGenerator>()
-    .AddInteractiveServerRenderMode();
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -77,7 +64,5 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     await SeedIdentity.EnsureSeededAsync(services);
 }
-
-app.MapHub<ChatHub>("/chathub");
 
 app.Run();

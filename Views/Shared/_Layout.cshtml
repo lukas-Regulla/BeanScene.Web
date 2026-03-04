@@ -36,50 +36,38 @@
                         <!-- 🍽 Add your app pages -->
                         @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
                         {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Reservations" asp-action="Index">
-                                Reservations
-                            </a>
-                        </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Chat" asp-action="Index">Chat</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Reservations" asp-action="Index">
+                                    Reservations
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
                             </li>
 
-						}
+                        }
 
                         @if (User.IsInRole("Admin"))
                         {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="SittingSchedules" asp-action="Index">
-                                Sitting Schedules
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Areas" asp-action="Index">
-                                Areas
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="RestaurantTables" asp-action="Index">
-                            Tables
-                        </a>
-                        </li>
-                       
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="SittingSchedules" asp-action="Index">
+                                    Sitting Schedules
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Areas" asp-action="Index">
+                                    Areas
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="RestaurantTables" asp-action="Index">
+                                    Tables
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Admin" asp-action="Users">
                                     Manage Users
                                 </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="ImageGenerator" asp-action="Index">
-                                    Image Generator
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="DoublyLinkedList" asp-action="Index">Doubly Linked List</a>
                             </li>
 
                         }
@@ -97,7 +85,7 @@
                             </li>
                             <li class="nav-item">
                                 <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
-                                      asp-route-returnUrl="@Url.Action("Index","Home")" method="post">
+                                      asp-route-returnUrl="@Url.Action("Index", "Home")" method="post">
                                     <button type="submit" class="nav-link btn btn-link text-dark">
                                         Logout
                                     </button>
@@ -140,7 +128,6 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="_framework/blazor.server.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
