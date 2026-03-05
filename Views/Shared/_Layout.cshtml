@@ -10,10 +10,11 @@
     <title>@ViewData["Title"] - BeanScene</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-light border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-light border-bottom box-shadow">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold text-primary" asp-area="" asp-controller="Home" asp-action="Index">
                     ☕ BeanScene Café
@@ -111,8 +112,10 @@
         </nav>
     </header>
 
+    @RenderSection("AboveContainer", required: false)
+
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pt-3 pb-3">
             @RenderBody()
         </main>
     </div>

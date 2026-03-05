@@ -1,44 +1,405 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @using BeanScene.Web.Data
 @inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Bean Scene Café";
 }
 
-<div class="text-center mt-5">
+@* ── Hero (full-bleed — rendered before the .container wrapper) ──────── *@
+@section AboveContainer {
+<section class="bs-hero" aria-label="Welcome to Bean Scene Café">
+    <div class="container">
+        <div class="row align-items-center">
 
-    <h1 class="display-3 fw-bold">Welcome to BeanScene</h1>
+            <div class="col-lg-7">
+                <p class="bs-hero__eyebrow">Est. 2008 · Brunswick East, Melbourne</p>
+                <h1 class="bs-hero__headline">
+                    Where Every Cup<br>
+                    Tells a Story
+                </h1>
+                <p class="bs-hero__sub">
+                    Handcrafted coffee, seasonal bites, and a table that's always yours.
+                    Come as you are — stay as long as the cup keeps you warm.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <a class="btn btn-secondary btn-lg px-4"
+                       asp-controller="Reservations" asp-action="Create">
+                        <i class="bi bi-calendar-check me-2"></i>Book a Table
+                    </a>
 
-    <p class="lead mt-3" style="max-width: 700px; margin: 0 auto;">
-        Enjoy a warm and inviting dining experience at BeanScene Café.
-        Book your next visit with ease, check your upcoming reservations,
-        and let us take care of the rest. Whether you’re joining us for a
-        quiet morning coffee or a lively evening meal — we’re here to make it memorable.
-    </p>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        @if (User.IsInRole("Member"))
+                        {
+                            <a class="btn btn-primary btn-lg px-4"
+                               asp-controller="Reservations" asp-action="MyReservations">
+                                <i class="bi bi-list-check me-2"></i>My Reservations
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary btn-lg px-4"
+                               asp-controller="Reservations" asp-action="Index">
+                                <i class="bi bi-calendar3 me-2"></i>View Reservations
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <a class="btn btn-primary btn-lg px-4" href="#">
+                            <i class="bi bi-journal-text me-2"></i>Our Menu
+                        </a>
+                    }
+                </div>
+            </div>
 
-    <hr class="mt-4 mb-4" style="width: 50%; margin-left: auto; margin-right: auto;" />
+            <div class="col-lg-5 d-none d-lg-flex justify-content-center align-items-center py-4">
+                <div class="bs-hero__deco-ring">
+                    <i class="bi bi-cup-hot-fill"></i>
+                </div>
+            </div>
 
-    <!-- Make Reservation Button -->
-    <div class="mt-3">
-        <a class="btn btn-lg btn-primary px-4 py-2"
-           asp-controller="Reservations"
-           asp-action="Create">
-            Make a Reservation
-        </a>
+        </div>
+    </div>
+</section>
+}
+
+@* ══════════════════════════════════════════════════════════════════════
+   1. Our Story
+   ══════════════════════════════════════════════════════════════════════ *@
+<section class="bs-section" aria-labelledby="story-heading">
+    <div class="row g-5 align-items-center">
+
+        <div class="col-lg-7">
+            <h2 class="page-title" id="story-heading">Our Story</h2>
+            <p class="mb-3">
+                Bean Scene began in 2008 as a twelve-seat espresso bar tucked beside a
+                Brunswick East bookshop. Founders <strong>Margot</strong> and <strong>Dean Calloway</strong>,
+                both former hospitality workers who had fallen in love over their first coffee at a Sydney
+                roastery, wanted to give their neighbourhood something it was quietly missing: a place
+                unhurried enough to linger, and honest enough to tell you when the beans were past their prime.
+            </p>
+            <p class="mb-3">
+                Word spread faster than either of them planned. By 2011 they had outgrown the bookshop
+                wall. In 2014 they moved to the current two-storey terrace on Northlane Street — still
+                in the same suburb, still sourcing beans from the same three roasters, still baking the
+                scones at five in the morning.
+            </p>
+            <p class="mb-3">
+                Today Bean Scene serves over four hundred guests a week, hosts monthly coffee masterclasses,
+                and keeps a permanent table free every Sunday morning for whoever needs it most — no booking
+                required, no questions asked.
+            </p>
+            <blockquote class="mb-0 ps-3" style="border-left: 3px solid var(--color-accent-dark); font-style: italic; color: var(--color-text-muted); font-size: 0.95rem;">
+                "We never wanted to be a chain — just the best version of a neighbourhood café."
+                <footer class="mt-1" style="font-size: 0.8rem; font-weight: 700; font-style: normal; color: var(--color-primary-dark);">— Margot Calloway, Co-founder</footer>
+            </blockquote>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="row g-4">
+                <div class="col-6">
+                    <div class="bs-stat">
+                        <div class="bs-stat__number">17+</div>
+                        <div class="bs-stat__label">Years in the community</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bs-stat">
+                        <div class="bs-stat__number">3</div>
+                        <div class="bs-stat__label">Local roasters, sourced weekly</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bs-stat">
+                        <div class="bs-stat__number">400+</div>
+                        <div class="bs-stat__label">Guests served each week</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="bs-stat">
+                        <div class="bs-stat__number">Daily</div>
+                        <div class="bs-stat__label">Fresh bakes from 5 am</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<hr class="bs-divider">
+
+@* ══════════════════════════════════════════════════════════════════════
+   2. Signature Drinks & Bites
+   ══════════════════════════════════════════════════════════════════════ *@
+<section class="bs-section" aria-labelledby="menu-heading">
+    <div class="bs-section-header">
+        <h2 class="bs-section-title" id="menu-heading">Signature Drinks &amp; Bites</h2>
+        <p class="bs-section-lead">
+            A handful of what keeps our regulars coming back. Ask your server about today's specials.
+        </p>
     </div>
 
-    <!-- Member-only "My Reservations" -->
-    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Member"))
-    {
-        <div class="mt-4">
-            <a asp-controller="Reservations"
-               asp-action="MyReservations"
-               class="btn btn-outline-primary btn-lg px-4 py-2">
-                View My Reservations
-            </a>
+    <div class="row g-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="bs-menu-card">
+                <i class="bi bi-cup-hot-fill bs-menu-card__icon"></i>
+                <span class="bs-menu-card__tag">Espresso Bar</span>
+                <div class="bs-menu-card__name">The Velvet Cortado</div>
+                <p class="bs-menu-card__desc">
+                    Rich single-origin espresso softened with micro-foamed oat milk,
+                    pulled to a precise 1:2 ratio. Our best-seller since day one.
+                </p>
+            </div>
         </div>
-    }
+        <div class="col-sm-6 col-xl-3">
+            <div class="bs-menu-card">
+                <i class="bi bi-cup-hot bs-menu-card__icon"></i>
+                <span class="bs-menu-card__tag">House Favourite</span>
+                <div class="bs-menu-card__name">Honey &amp; Rosemary Flat White</div>
+                <p class="bs-menu-card__desc">
+                    Local wildflower honey and a whisper of rosemary swirled through a
+                    velvety double shot. Sweet, herbal, and utterly memorable.
+                </p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bs-menu-card">
+                <i class="bi bi-cake2 bs-menu-card__icon"></i>
+                <span class="bs-menu-card__tag">Seasonal Bake</span>
+                <div class="bs-menu-card__name">Forest Berry Tart</div>
+                <p class="bs-menu-card__desc">
+                    House-made shortcrust filled with mascarpone cream and crowned with
+                    seasonal berries. Best paired with a long black.
+                </p>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="bs-menu-card">
+                <i class="bi bi-basket2 bs-menu-card__icon"></i>
+                <span class="bs-menu-card__tag">Morning Classic</span>
+                <div class="bs-menu-card__name">Brown Butter Scone</div>
+                <p class="bs-menu-card__desc">
+                    Baked fresh every morning. Flaky, golden, and served warm with
+                    house jam and clotted cream. Gone by 10 am on weekends.
+                </p>
+            </div>
+        </div>
+    </div>
 
-</div>
+    <div class="text-center mt-4">
+        <a href="#" class="btn btn-secondary px-4">
+            View Full Menu <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+</section>
+
+<hr class="bs-divider">
+
+@* ══════════════════════════════════════════════════════════════════════
+   3. Hours & Location
+   ══════════════════════════════════════════════════════════════════════ *@
+<section class="bs-section" aria-labelledby="location-heading">
+    <div class="bs-section-header">
+        <h2 class="bs-section-title" id="location-heading">Hours &amp; Location</h2>
+        <p class="bs-section-lead">Walk-ins are always welcome. Reservations are appreciated for groups of four or more.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+
+        <div class="col-md-5">
+            <div class="card" style="margin-bottom: 0;">
+                <h3 class="fw-bold mb-3" style="font-size: 1rem; color: var(--color-primary-dark);">
+                    <i class="bi bi-clock me-2" style="color: var(--color-accent-dark);"></i>Opening Hours
+                </h3>
+                <table class="bs-hours-table">
+                    <tbody>
+                        <tr>
+                            <td class="day">Monday – Friday</td>
+                            <td class="hrs">7:00 am – 5:00 pm</td>
+                        </tr>
+                        <tr>
+                            <td class="day">Saturday</td>
+                            <td class="hrs">7:30 am – 4:30 pm</td>
+                        </tr>
+                        <tr>
+                            <td class="day">Sunday</td>
+                            <td class="hrs">8:00 am – 3:30 pm</td>
+                        </tr>
+                        <tr>
+                            <td class="day">Public Holidays</td>
+                            <td class="hrs">9:00 am – 2:00 pm</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="mt-3 mb-0" style="font-size: 0.8rem; color: var(--color-text-muted);">
+                    Last coffee orders 20 minutes before closing.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card" style="margin-bottom: 0;">
+                <h3 class="fw-bold mb-3" style="font-size: 1rem; color: var(--color-primary-dark);">
+                    <i class="bi bi-geo-alt me-2" style="color: var(--color-accent-dark);"></i>Find Us
+                </h3>
+                <div class="bs-contact-row">
+                    <i class="bi bi-map"></i>
+                    <div>
+                        <span class="bs-contact-label">Address</span>
+                        <span class="bs-contact-value">42 Northlane Street, Brunswick East VIC 3057</span>
+                    </div>
+                </div>
+                <div class="bs-contact-row">
+                    <i class="bi bi-telephone"></i>
+                    <div>
+                        <span class="bs-contact-label">Phone</span>
+                        <a class="bs-contact-value text-decoration-none" href="tel:+61393887421">(03) 9388 7421</a>
+                    </div>
+                </div>
+                <div class="bs-contact-row">
+                    <i class="bi bi-envelope"></i>
+                    <div>
+                        <span class="bs-contact-label">Email</span>
+                        <a class="bs-contact-value text-decoration-none" href="mailto:hello@beanscenecafe.com.au">hello@beanscenecafe.com.au</a>
+                    </div>
+                </div>
+                <div class="bs-contact-row">
+                    <i class="bi bi-bus-front"></i>
+                    <div>
+                        <span class="bs-contact-label">Getting Here</span>
+                        <span class="bs-contact-value">Tram 96 (stop 28) · 5 min walk from Merri Creek trail</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<hr class="bs-divider">
+
+@* ══════════════════════════════════════════════════════════════════════
+   4. Reviews
+   ══════════════════════════════════════════════════════════════════════ *@
+<section class="bs-section" aria-labelledby="reviews-heading">
+    <div class="bs-section-header">
+        <h2 class="bs-section-title" id="reviews-heading">What Our Guests Say</h2>
+        <p class="bs-section-lead">We let the cups do the talking first.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="bs-testimonial">
+                <span class="bs-testimonial__quote-mark" aria-hidden="true">&ldquo;</span>
+                <p class="bs-testimonial__body">
+                    Bean Scene is my non-negotiable morning ritual. The coffee is consistently
+                    brilliant and the staff actually remember your name — that matters more than
+                    people realise.
+                </p>
+                <div class="bs-testimonial__stars" aria-label="5 out of 5 stars">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <p class="bs-testimonial__name">Sarah T.</p>
+                <p class="bs-testimonial__platform">via Google Reviews</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bs-testimonial">
+                <span class="bs-testimonial__quote-mark" aria-hidden="true">&ldquo;</span>
+                <p class="bs-testimonial__body">
+                    Booked a table for my partner's birthday brunch and the team went completely
+                    above and beyond. The honey flat white alone was worth the trip across town.
+                </p>
+                <div class="bs-testimonial__stars" aria-label="5 out of 5 stars">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <p class="bs-testimonial__name">James K.</p>
+                <p class="bs-testimonial__platform">via TripAdvisor</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bs-testimonial">
+                <span class="bs-testimonial__quote-mark" aria-hidden="true">&ldquo;</span>
+                <p class="bs-testimonial__body">
+                    Finally, a café that does pour-over the way it should be done — quiet,
+                    unhurried, and precise. The forest berry tart is genuinely otherworldly.
+                </p>
+                <div class="bs-testimonial__stars" aria-label="5 out of 5 stars">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <p class="bs-testimonial__name">Priya M.</p>
+                <p class="bs-testimonial__platform">via Facebook</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<hr class="bs-divider">
+
+@* ══════════════════════════════════════════════════════════════════════
+   5. Upcoming Events
+   ══════════════════════════════════════════════════════════════════════ *@
+<section class="bs-section" aria-labelledby="events-heading">
+    <div class="bs-section-header">
+        <h2 class="bs-section-title" id="events-heading">Upcoming Events</h2>
+        <p class="bs-section-lead">
+            Coffee tastings, live music, and seasonal specials — there's always a reason to visit.
+        </p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+
+        <div class="col-md-5">
+            <div class="bs-event">
+                <div class="bs-event__badge">
+                    <span class="bs-event__badge-day">15</span>
+                    <span class="bs-event__badge-month">Mar</span>
+                </div>
+                <div>
+                    <div class="bs-event__title">Coffee Masterclass</div>
+                    <p class="bs-event__meta"><i class="bi bi-clock"></i>10:00 am – 12:00 pm</p>
+                    <p class="bs-event__meta"><i class="bi bi-tag"></i>$45 per person · Limited to 12</p>
+                    <p class="bs-event__desc">
+                        Learn espresso dialling, latte art fundamentals, and pour-over technique
+                        with our head barista. Includes a flight of three coffees and a brunch bite.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="bs-event">
+                <div class="bs-event__badge">
+                    <span class="bs-event__badge-day">Sun</span>
+                    <span class="bs-event__badge-month">Weekly</span>
+                </div>
+                <div>
+                    <div class="bs-event__title">Sunday Jazz Brunch</div>
+                    <p class="bs-event__meta"><i class="bi bi-clock"></i>10:00 am – 1:00 pm</p>
+                    <p class="bs-event__meta"><i class="bi bi-music-note-beamed"></i>Live acoustic · No cover charge</p>
+                    <p class="bs-event__desc">
+                        Every Sunday we host a rotating lineup of Melbourne's finest acoustic
+                        jazz musicians. First-come, first-served — walk-ins always welcomed.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-4">
+        <a class="btn btn-primary px-4"
+           asp-controller="Reservations" asp-action="Create">
+            <i class="bi bi-calendar-check me-2"></i>Reserve Your Spot
+        </a>
+    </div>
+</section>
