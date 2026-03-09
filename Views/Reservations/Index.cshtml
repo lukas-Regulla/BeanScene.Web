@@ -43,7 +43,7 @@
                 <td>@Html.DisplayFor(modelItem => item.ReservationSource)</td>
                 <td>@Html.DisplayFor(modelItem => item.Notes)</td>
                 <td>
-                    <span class="status-badge status-@(item.Status?.ToLower() ?? "")">
+                    <span class="status-badge status-@item.Status.ToString().ToLower()">
                         @item.Status
                     </span>
                 </td>

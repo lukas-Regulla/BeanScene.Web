@@ -38,7 +38,7 @@
 
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Status)</dt>
             <dd class="col-sm-9">
-                <span class="status-badge status-@(Model?.Status?.ToLower() ?? "")">
+                <span class="status-badge status-@Model?.Status.ToString().ToLower()">
                     @Model?.Status
                 </span>
             </dd>

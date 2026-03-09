@@ -79,6 +79,7 @@ public partial class BeanSceneContext : DbContext
             entity.Property(e => e.SittingId).HasColumnName("SittingID");
             entity.Property(e => e.StartTime).HasPrecision(0);
             entity.Property(e => e.Status)
+                .HasConversion<string>()
                 .HasMaxLength(20)
                 .IsUnicode(false);
 
@@ -148,7 +149,8 @@ public partial class BeanSceneContext : DbContext
             entity.Property(e => e.Scapacity).HasColumnName("SCapacity");
             entity.Property(e => e.StartDateTime).HasPrecision(0);
             entity.Property(e => e.Status)
-                .HasMaxLength(6)
+                .HasConversion<string>()
+                .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.Stype)
                 .HasMaxLength(15)

@@ -38,7 +38,7 @@ public class TableAssignmentService : ITableAssignmentService
         }
 
         // Assigning tables moves the reservation to Confirmed status.
-        reservation.Status = "Confirmed";
+        reservation.Status = ReservationStatus.Confirmed;
         await _context.SaveChangesAsync();
 
         return TableAssignmentResult.Success();

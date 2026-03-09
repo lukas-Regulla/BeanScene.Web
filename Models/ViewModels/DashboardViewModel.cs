@@ -30,7 +30,7 @@ namespace BeanScene.Web.Models.ViewModels
         public string GuestName { get; set; } = "";
         public DateTime StartTime { get; set; }
         public int NumOfGuests { get; set; }
-        public string Status { get; set; } = "";
+        public ReservationStatus Status { get; set; }
         public string SittingName { get; set; } = "";
     }
 

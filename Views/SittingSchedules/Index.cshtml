@@ -43,7 +43,7 @@
                 @Html.DisplayFor(modelItem => item.EndDateTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Scapacity)
+                @item.Reservations.Sum(r => r.NumOfGuests) / @item.Scapacity
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)

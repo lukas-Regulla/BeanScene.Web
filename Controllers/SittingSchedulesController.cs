@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BeanScene.Web.Data;
 using BeanScene.Web.Models;
+using BeanScene.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,10 +16,12 @@ namespace BeanScene.Web.Controllers
     public class SittingSchedulesController : Controller
     {
         private readonly BeanSceneContext _context;
+        private readonly SittingScheduleService _sittingService;
 
-        public SittingSchedulesController(BeanSceneContext context)
+        public SittingSchedulesController(BeanSceneContext context, SittingScheduleService sittingSchedule)
         {
             _context = context;
+            _sittingService = sittingSchedule;
         }
 
         /// <summary>
@@ -29,8 +32,21 @@ namespace BeanScene.Web.Controllers
         /// <returns>View displaying list of all sitting schedules</returns>
         public async Task<IActionResult> Index()
         {
-            // Query all sitting schedules from database and return as list
-            return View(await _context.SittingSchedules.ToListAsync());
+            var today = DateTime.Today;
+
+            await _sittingService.EnsureDailySittingsExistAsync(today);
+
+            var sittings  = await _context.SittingSchedules
+                .AsNoTracking()
+                .Include(s => s.Reservations)
+                .Where(s =>
+                    s.StartDateTime.Date == today.Date ||
+                    s.Status == SittingStatus.Closed ||
+                    s.Reservations.Any())
+                .OrderBy(s => s.StartDateTime)
+                .ToListAsync();
+
+            return View(sittings);
         }
 
         /// <summary>
@@ -81,7 +97,7 @@ namespace BeanScene.Web.Controllers
         /// <returns>Redirects to Index on success, or returns form if validation fails</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SittingScheduleId,Stype,StartDateTime,EndDateTime,Scapacity,Status,IsClosed")] SittingSchedule sittingSchedule)
+        public async Task<IActionResult> Create([Bind("SittingScheduleId,Stype,StartDateTime,EndDateTime,Scapacity,Status")] SittingSchedule sittingSchedule)
         {
             // Check if all required fields are valid
             if (ModelState.IsValid)
@@ -133,7 +149,7 @@ namespace BeanScene.Web.Controllers
         /// <returns>Redirects to Index on success, or returns form if validation fails</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SittingScheduleId,Stype,StartDateTime,EndDateTime,Scapacity,Status,IsClosed")] SittingSchedule sittingSchedule)
+        public async Task<IActionResult> Edit(int id, [Bind("SittingScheduleId,Stype,StartDateTime,EndDateTime,Scapacity,Status")] SittingSchedule sittingSchedule)
         {
             // Validate that provided ID matches the sitting schedule's ID
             if (id != sittingSchedule.SittingScheduleId)
@@ -233,5 +249,6 @@ namespace BeanScene.Web.Controllers
         {
             return _context.SittingSchedules.Any(e => e.SittingScheduleId == id);
         }
+
     }
 }

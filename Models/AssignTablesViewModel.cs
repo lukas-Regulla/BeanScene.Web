@@ -10,7 +10,7 @@ namespace BeanScene.Web.Models
         public string GuestName { get; set; } = string.Empty;
         public int NumOfGuests { get; set; }
         public string SittingName { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
+        public ReservationStatus Status { get; set; }
 
         // Tables
         public List<RestaurantTable> AvailableTables { get; set; } = new();

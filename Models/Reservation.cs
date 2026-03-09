@@ -9,8 +9,12 @@ public partial class Reservation
 {
     public int ReservationId { get; set; }
 
-    [Required, Display(Name = "Sitting")]
+    [Required]
     public int SittingId { get; set; }
+
+    [Required, Display(Name = "Sitting")]
+    [StringLength(50)]
+    public string Stype { get; set; } = null!;
 
     [Required, StringLength(50)]
     public string FirstName { get; set; } = null!;
@@ -39,7 +43,7 @@ public partial class Reservation
     public string? Notes { get; set; }
 
  
-    public string Status { get; set; } = "Pending";
+    public ReservationStatus Status { get; set; } = ReservationStatus.Pending;
 
     // You won't post this from the form; set it in the controller
     public DateTime CreatedAt { get; set; }

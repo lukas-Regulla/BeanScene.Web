@@ -16,7 +16,7 @@ public partial class SittingSchedule
 
     public int Scapacity { get; set; }
 
-    public string Status { get; set; }
+    public SittingStatus Status { get; set; }
 
     //public bool IsClosed { get; set; }
 

@@ -20,12 +20,12 @@
                 <td>@r.NumOfGuests</td>
                 <td>@r.Duration</td>
                 <td>
-                    <span class="status-badge status-@(r.Status?.ToLower() ?? "")">
+                    <span class="status-badge status-@r.Status.ToString().ToLower()">
                         @r.Status
                     </span>
                 </td>
                 <td>
-                    @if (r.Status == "Pending")
+                    @if (r.Status == ReservationStatus.Pending)
                     {
                         <a asp-action="Edit"
                            asp-route-id="@r.ReservationId"

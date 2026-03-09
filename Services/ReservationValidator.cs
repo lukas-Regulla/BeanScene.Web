@@ -13,14 +13,14 @@ public class ReservationValidator : IReservationValidator
         _context = context;
     }
 
-    public Task<(SittingSchedule? Sitting, ValidationResult Result)> ValidateCreateAsync(int sittingId, int guests)
-        => ValidateAsync(sittingId, guests, excludeReservationId: null);
+    public Task<(SittingSchedule? Sitting, ValidationResult Result)> ValidateCreateAsync(int sittingId, int guests, DateTime startTime)
+        => ValidateAsync(sittingId, guests, startTime, excludeReservationId: null);
 
-    public Task<(SittingSchedule? Sitting, ValidationResult Result)> ValidateEditAsync(int sittingId, int guests, int reservationId)
-        => ValidateAsync(sittingId, guests, excludeReservationId: reservationId);
+    public Task<(SittingSchedule? Sitting, ValidationResult Result)> ValidateEditAsync(int sittingId, int guests, int reservationId, DateTime startTime)
+        => ValidateAsync(sittingId, guests, startTime, excludeReservationId: reservationId);
 
     private async Task<(SittingSchedule? Sitting, ValidationResult Result)> ValidateAsync(
-        int sittingId, int guests, int? excludeReservationId)
+        int sittingId, int guests, DateTime startTime, int? excludeReservationId)
     {
         var result = new ValidationResult();
 
@@ -31,8 +31,12 @@ public class ReservationValidator : IReservationValidator
             return (null, result);
         }
 
-        if (sitting.Status == "Closed")
+        if (sitting.Status == SittingStatus.Closed)
             result.Add("SittingId", "This sitting is CLOSED. No reservations allowed.");
+
+        if (startTime < sitting.StartDateTime || startTime > sitting.EndDateTime)
+            result.Add("StartTime",
+                $"Start time must be between {sitting.StartDateTime:h:mm tt} and {sitting.EndDateTime:h:mm tt}.");
 
         // Exclude the given reservation from the booked count (used on edits so the
         // reservation doesn't count against its own sitting capacity).

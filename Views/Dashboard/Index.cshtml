@@ -7,11 +7,11 @@
     var trendLabels  = Model.WeekTrend.Select(d => d.Label).ToArray();
     var trendData    = Model.WeekTrend.Select(d => d.Total).ToArray();
 
-    string StatusBadge(string status) => status switch
+    string StatusBadge(ReservationStatus status) => status switch
     {
-        "Confirmed" => "bg-success",
-        "Pending"   => "bg-warning text-dark",
-        _           => "bg-danger"
+        ReservationStatus.Confirmed => "bg-success",
+        ReservationStatus.Pending   => "bg-warning text-dark",
+        _                           => "bg-danger"
     };
 }
 

@@ -1,4 +1,5 @@
 using BeanScene.Web.Data;
+using BeanScene.Web.Models;
 using BeanScene.Web.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,7 +48,7 @@ public class ReservationStatisticsService : IReservationStatisticsService
 
         // Next 8 non-cancelled reservations from now.
         var upcoming = await _context.Reservations
-            .Where(r => r.StartTime >= now && r.Status != "Cancelled")
+            .Where(r => r.StartTime >= now && r.Status != ReservationStatus.Cancelled)
             .OrderBy(r => r.StartTime)
             .Take(8)
             .Select(r => new UpcomingReservationDto
@@ -64,11 +65,11 @@ public class ReservationStatisticsService : IReservationStatisticsService
         return new DashboardViewModel
         {
             TotalToday = todayRes.Count,
-            PendingToday = todayRes.Count(r => r.Status == "Pending"),
-            ConfirmedToday = todayRes.Count(r => r.Status == "Confirmed"),
-            CancelledToday = todayRes.Count(r => r.Status == "Cancelled"),
-            OverallPending = await _context.Reservations.CountAsync(r => r.Status == "Pending"),
-            OverallConfirmed = await _context.Reservations.CountAsync(r => r.Status == "Confirmed"),
+            PendingToday = todayRes.Count(r => r.Status == ReservationStatus.Pending),
+            ConfirmedToday = todayRes.Count(r => r.Status == ReservationStatus.Confirmed),
+            CancelledToday = todayRes.Count(r => r.Status == ReservationStatus.Cancelled),
+            OverallPending = await _context.Reservations.CountAsync(r => r.Status == ReservationStatus.Pending),
+            OverallConfirmed = await _context.Reservations.CountAsync(r => r.Status == ReservationStatus.Confirmed),
             TodayBySitting = todayRes
                 .GroupBy(r => r.Sitting?.Stype ?? "Unknown")
                 .Select(g => new SittingStatDto { SittingName = g.Key, Count = g.Count() })

@@ -33,6 +33,7 @@ builder.Services.AddScoped<IReservationValidator, ReservationValidator>();
 builder.Services.AddScoped<IReservationEmailService, ReservationEmailService>();
 builder.Services.AddScoped<IReservationStatisticsService, ReservationStatisticsService>();
 builder.Services.AddScoped<ITableAssignmentService, TableAssignmentService>();
+builder.Services.AddScoped<SittingScheduleService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

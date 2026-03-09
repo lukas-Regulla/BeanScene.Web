@@ -15,13 +15,15 @@ namespace BeanScene.Web.Controllers
         private readonly IReservationValidator _validator;
         private readonly IReservationEmailService _emailService;
         private readonly ITableAssignmentService _tableAssignment;
+        private readonly SittingScheduleService _sittingScheduleService;
 
-        public ReservationsController(BeanSceneContext context, IReservationValidator validator, IReservationEmailService emailService, ITableAssignmentService tableAssignment)
+        public ReservationsController(BeanSceneContext context, IReservationValidator validator, IReservationEmailService emailService, ITableAssignmentService tableAssignment, SittingScheduleService sittingScheduleService)
         {
             _context = context;
             _validator = validator;
             _emailService = emailService;
             _tableAssignment = tableAssignment;
+            _sittingScheduleService = sittingScheduleService;
         }
 
         // ── Actions ──────────────────────────────────────────────────────────────
@@ -32,7 +34,9 @@ namespace BeanScene.Web.Controllers
         [Authorize(Roles = "Admin,Staff")]
         public async Task<IActionResult> Index()
         {
-            var beanSceneContext = _context.Reservations.Include(r => r.Sitting);
+            var beanSceneContext = _context.Reservations
+                .Include(r => r.Sitting)
+                .OrderByDescending(r => r.CreatedAt);
             return View(await beanSceneContext.ToListAsync());
         }
 
@@ -47,6 +51,7 @@ namespace BeanScene.Web.Controllers
             var reservations = await _context.Reservations
                 .Where(r => r.Email == email)
                 .Include(r => r.Sitting)
+                .OrderByDescending(r => r.CreatedAt)
                 .ToListAsync();
 
             return View(reservations);
@@ -79,7 +84,7 @@ namespace BeanScene.Web.Controllers
         [Authorize(Roles = "Member,Admin,Staff")]
         public IActionResult Create()
         {
-            ViewData["SittingId"] = BuildSittingSelectList();              
+            ViewData["Stype"] = new SelectList(new[] { "Breakfast","Lunch", "Dinner" });              
             return View();
         }
 
@@ -91,28 +96,36 @@ namespace BeanScene.Web.Controllers
         [Authorize(Roles = "Member,Admin,Staff")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ReservationId,SittingId,FirstName,LastName,Email,Phone,StartTime,Duration,NumOfGuests,ReservationSource,Notes,Status,CreatedAt")] Reservation reservation)
+        public async Task<IActionResult> Create([Bind("ReservationId,Stype,FirstName,LastName,Email,Phone,StartTime,Duration,NumOfGuests,ReservationSource,Notes,Status,CreatedAt")] Reservation reservation)
         {
-            var (sitting, validation) = await _validator.ValidateCreateAsync(reservation.SittingId, reservation.NumOfGuests);
+            var sittingDate = reservation.StartTime.Date;
+
+            var sitting = await _sittingScheduleService.GetOrCreateSittingAsync(sittingDate, reservation.Stype);
+            reservation.SittingId = sitting.SittingScheduleId;
+
+            var (_, validation) = await _validator.ValidateCreateAsync(
+                reservation.SittingId,
+                reservation.NumOfGuests,
+                reservation.StartTime);
+
             foreach (var (key, msg) in validation.Errors)
                 ModelState.AddModelError(key, msg);
 
             if (!ModelState.IsValid)
             {
-                ViewData["SittingId"] = BuildSittingSelectList(reservation.SittingId);
+                ViewData["Stype"] = new SelectList(new[] { "Breakfast", "Lunch", "Dinner" }, reservation.Stype);
                 return View(reservation);
             }
 
-            reservation.Status = "Pending";
+            reservation.Status = ReservationStatus.Pending;
             reservation.CreatedAt = DateTime.Now;
 
             _context.Add(reservation);
             await _context.SaveChangesAsync();
 
-            if (sitting != null)
-                await _emailService.SendCreatedAsync(reservation, sitting);
+            await _emailService.SendCreatedAsync(reservation, sitting);
 
-            if (IsMember())                                                
+            if (IsMember())
                 return RedirectToAction("Index", "Home");
 
             return RedirectToAction(nameof(Index));
@@ -160,7 +173,7 @@ namespace BeanScene.Web.Controllers
             if (id != reservation.ReservationId)
                 return NotFound();
 
-            var (_, validation) = await _validator.ValidateEditAsync(reservation.SittingId, reservation.NumOfGuests, id);
+            var (_, validation) = await _validator.ValidateEditAsync(reservation.SittingId, reservation.NumOfGuests, id, reservation.StartTime);
             foreach (var (key, msg) in validation.Errors)
                 ModelState.AddModelError(key, msg);
 
@@ -313,15 +326,18 @@ namespace BeanScene.Web.Controllers
         private SelectList BuildSittingSelectList(int? selectedId = null)
         {
             var items = _context.SittingSchedules
-                .AsNoTracking() // read-only query
+                .AsNoTracking()
+                .Where(s => s.StartDateTime.Date >= DateTime.Today
+                         && s.Status == SittingStatus.Open)
+                .OrderBy(s => s.StartDateTime)
                 .Select(s => new
                 {
                     s.SittingScheduleId,
-                    Label = s.Stype + " (" +
-                            s.StartDateTime.ToString("h:mm tt") + " - " +
+                    Label = s.Stype + " — " + s.StartDateTime.ToString("ddd d MMM") +
+                            " (" + s.StartDateTime.ToString("h:mm tt") + " – " +
                             s.EndDateTime.ToString("h:mm tt") + ")"
                 })
-                .ToList(); // force query execution now
+                .ToList();
 
             return new SelectList(items, "SittingScheduleId", "Label", selectedId);
         }
