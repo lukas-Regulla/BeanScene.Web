@@ -18,8 +18,8 @@ namespace BeanScene.Web.Services
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             var host = _config["Smtp:Host"];
-            var port = int.Parse(_config["Smtp:Port"]);
-            var username = _config["Smtp:User"];
+            var port = int.Parse(_config["Smtp:Port"] ?? "587");
+            var username = _config["Smtp:User"] ?? string.Empty;
             var password = _config["Smtp:Password"];
 
             var client = new SmtpClient(host)

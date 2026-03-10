@@ -31,10 +31,10 @@ public partial class RestaurantTable
 public class ReservationTable
 {
     public int ReservationId { get; set; }
-    public Reservation Reservation { get; set; }
+    public Reservation? Reservation { get; set; }
 
     public int RestaurantTableID { get; set; }
-    public RestaurantTable RestaurantTable { get; set; }
+    public RestaurantTable? RestaurantTable { get; set; }
 }
 
 
