@@ -7,29 +7,60 @@
 <h1>Areas</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
-<table class="table">
+
+<table class="table table-hover align-middle">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.AreaName)
             </th>
-            <th></th>
+            <th class="text-end" style="width: 250px;"></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AreaName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AreaId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AreaId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AreaId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AreaName)
+                </td>
+                <td class="text-end">
+                    <div class="dropup d-inline-block">
+                        <button class="btn btn-primary btn-sm dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            Actions
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-action="Edit"
+                                   asp-route-id="@item.AreaId">
+                                    Edit
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   asp-action="Details"
+                                   asp-route-id="@item.AreaId">
+                                    Details
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger"
+                                   asp-action="Delete"
+                                   asp-route-id="@item.AreaId">
+                                    Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

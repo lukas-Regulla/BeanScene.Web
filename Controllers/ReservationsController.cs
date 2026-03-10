@@ -173,15 +173,21 @@ namespace BeanScene.Web.Controllers
             if (id != reservation.ReservationId)
                 return NotFound();
 
-            var (_, validation) = await _validator.ValidateEditAsync(reservation.SittingId, reservation.NumOfGuests, id, reservation.StartTime);
+            var (sitting, validation) = await _validator.ValidateEditAsync(reservation.SittingId, reservation.NumOfGuests, id, reservation.StartTime);
             foreach (var (key, msg) in validation.Errors)
                 ModelState.AddModelError(key, msg);
+
+            // Stype is not submitted from the Edit form; remove it from validation.
+            ModelState.Remove("Stype");
 
             if (!ModelState.IsValid)
             {
                 ViewData["SittingId"] = BuildSittingSelectList(reservation.SittingId);
                 return View(reservation);
             }
+
+            // Keep Stype in sync with the selected sitting.
+            reservation.Stype = sitting!.Stype;
 
             try
             {
@@ -327,8 +333,8 @@ namespace BeanScene.Web.Controllers
         {
             var items = _context.SittingSchedules
                 .AsNoTracking()
-                .Where(s => s.StartDateTime.Date >= DateTime.Today
-                         && s.Status == SittingStatus.Open)
+                .Where(s => (s.StartDateTime.Date >= DateTime.Today && s.Status == SittingStatus.Open)
+                         || (selectedId.HasValue && s.SittingScheduleId == selectedId.Value))
                 .OrderBy(s => s.StartDateTime)
                 .Select(s => new
                 {

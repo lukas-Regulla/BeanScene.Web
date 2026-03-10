@@ -9,7 +9,7 @@
 <div>
     <h4>Area</h4>
     <hr />
-    <dl class="row">
+    <dl class="card">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.AreaName)
         </dt>
@@ -19,6 +19,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.AreaId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.AreaId"class=" btn btn-primary">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

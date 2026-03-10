@@ -10,7 +10,7 @@
 <div>
     <h4>Reservation</h4>
     <hr />
-    <dl class="row">
+    <dl class="card">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
         </dt>
@@ -88,6 +88,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="ReservationId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index"class=" btn btn-secondary">Back to List</a>
     </form>
 </div>

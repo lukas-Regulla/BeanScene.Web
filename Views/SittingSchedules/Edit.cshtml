@@ -6,9 +6,9 @@
 
 <h1>Edit</h1>
 
-<h4>SittingSchedule</h4>
+<h4>Sitting Schedule</h4>
 <hr />
-<div class="row">
+<div class="card">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -39,18 +39,16 @@
                         asp-items="Html.GetEnumSelectList<SittingStatus>()"></select>
 
                 <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+            </div>  
         </form>
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary" /> |
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
